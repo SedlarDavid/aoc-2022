@@ -5,9 +5,30 @@ Future<void> main() async {
   final input = new File('1/input.txt');
 
   partOne(input);
+  partTwo(input);
 }
 
 void partOne(File input) {
+  final indexToCallories = getIndexToCalories(input);
+
+  print('1 - ' + indexToCallories.values.reduce(max).toString());
+}
+
+void partTwo(File input) {
+  final indexToCallories = getIndexToCalories(input);
+
+  final topFirst = indexToCallories.values.reduce(max);
+  indexToCallories.removeWhere((key, value) => value == topFirst);
+
+  final topSecond = indexToCallories.values.reduce(max);
+  indexToCallories.removeWhere((key, value) => value == topSecond);
+
+  final topThird = indexToCallories.values.reduce(max);
+
+  print('2 - ' + (topFirst + topSecond + topThird).toString());
+}
+
+Map<int, int> getIndexToCalories(File input) {
   final data = input
       .readAsLinesSync()
       .map((l) => int.tryParse(l))
@@ -30,6 +51,5 @@ void partOne(File input) {
       continue;
     }
   }
-
-  print(indexToCallories.values.reduce(max));
+  return indexToCallories;
 }
