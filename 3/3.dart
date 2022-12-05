@@ -5,6 +5,7 @@ Future<void> main() async {
 
   prepPoints();
   partOne(input);
+  partTwo(input);
 }
 
 void prepPoints() {
@@ -23,6 +24,12 @@ void partOne(File input) {
   final sum = sumOfPriorities(input);
 
   print('1 - ' + sum.toString());
+}
+
+void partTwo(File input) {
+  final sum = sumOfPrioritiesFromChunks(input);
+
+  print('2 - ' + sum.toString());
 }
 
 int sumOfPriorities(File input) {
@@ -48,7 +55,48 @@ int sumOfPriorities(File input) {
     containedChars.addAll(lineContainedChars);
   }
   for (var char in containedChars) {
-    print(char + " " + charToPoints[char]!.toString());
+    points += charToPoints[char]!;
+  }
+
+  return points;
+}
+
+int sumOfPrioritiesFromChunks(File input) {
+  var lines = input.readAsLinesSync().toList(growable: false);
+  final chunks = <int, List<String>>{};
+
+  var counter = 0;
+  for (var i = 0; i < lines.length; i++) {
+    if (!chunks.containsKey(counter)) {
+      chunks[counter] = [lines[i]];
+      continue;
+    }
+    if (chunks[counter]!.length < 3) {
+      chunks[counter]!.add(lines[i]);
+    }
+    if (chunks[counter]!.length == 3) {
+      counter++;
+    }
+  }
+
+  var points = 0;
+  final containedChars = <String>[];
+
+  for (var chunk in chunks.entries) {
+    final first = chunk.value.first.split('')..sort();
+    final second = chunk.value[1].split('')..sort();
+    final third = chunk.value.last.split('')..sort();
+
+    final lineContainedChars = <String>{};
+
+    for (var i = 0; i < first.length; i++) {
+      if (second.contains(first[i]) && third.contains(first[i])) {
+        lineContainedChars.add(first[i]);
+      }
+    }
+    containedChars.addAll(lineContainedChars);
+  }
+  for (var char in containedChars) {
     points += charToPoints[char]!;
   }
 
